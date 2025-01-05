@@ -10,7 +10,7 @@
     
     <title>Shared Horizons</title>
 </head>
-<body class="bg-purple-200">
+<body class="bg-purple-300">
 
     <header>
         <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
@@ -31,23 +31,23 @@
         </nav>
     </header>
 
-    <main class="pt-[5rem]">
+    <main class="pt-[5rem] pb-[5rem]">
 
         <section class="flex gap-x-[6rem]">
             <div class="ml-[13rem] mt-[4rem]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 fill-stone-700 inline rotate-180" viewBox="0 0 475.082 475.081">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 fill-white inline rotate-180" viewBox="0 0 475.082 475.081">
                     <path d="M164.454 36.547H54.818c-15.229 0-28.171 5.33-38.832 15.987C5.33 63.193 0 76.135 0 91.365v109.632c0 15.229 5.327 28.169 15.986 38.826 10.66 10.656 23.606 15.988 38.832 15.988h63.953c7.611 0 14.084 2.666 19.414 7.994 5.33 5.325 7.994 11.8 7.994 19.417v9.131c0 20.177-7.139 37.397-21.413 51.675-14.275 14.271-31.499 21.409-51.678 21.409h-18.27c-4.952 0-9.233 1.813-12.851 5.427-3.615 3.614-5.424 7.898-5.424 12.847v36.549c0 4.941 1.809 9.233 5.424 12.848 3.621 3.613 7.898 5.427 12.851 5.427h18.271c19.797 0 38.688-3.86 56.676-11.566 17.987-7.707 33.546-18.131 46.68-31.265 13.131-13.135 23.553-28.691 31.261-46.679 7.707-17.987 11.562-36.877 11.562-56.671V91.361c0-15.23-5.33-28.171-15.987-38.828s-23.602-15.986-38.827-15.986zm294.635 15.987c-10.656-10.657-23.599-15.987-38.828-15.987H310.629c-15.229 0-28.171 5.33-38.828 15.987-10.656 10.66-15.984 23.601-15.984 38.831v109.632c0 15.229 5.328 28.169 15.984 38.826 10.657 10.656 23.6 15.988 38.828 15.988h63.953c7.611 0 14.089 2.666 19.418 7.994 5.324 5.328 7.994 11.8 7.994 19.417v9.131c0 20.177-7.139 37.397-21.416 51.675-14.274 14.271-31.494 21.409-51.675 21.409h-18.274c-4.948 0-9.233 1.813-12.847 5.427-3.617 3.614-5.428 7.898-5.428 12.847v36.549c0 4.941 1.811 9.233 5.428 12.848 3.613 3.613 7.898 5.427 12.847 5.427h18.274c19.794 0 38.684-3.86 56.674-11.566 17.984-7.707 33.541-18.131 46.676-31.265 13.134-13.135 23.562-28.695 31.265-46.679 7.706-17.983 11.563-36.877 11.563-56.671V91.361c-.003-15.23-5.328-28.171-15.992-38.827z" data-original="#000000"></path>
                 </svg>
-                <p class="text-stone-700 text-xl font-bold mt-6 w-[29rem] leading-relaxed">Notre site web simplifie la consultation juridique en vous permettant de trouver rapidement l'avocat qui correspond à vos besoins. Que ce soit pour des conseils sur des questions juridiques spécifiques ou pour une représentation légale, notre plateforme vous met en relation avec des professionnels compétents, prêts à vous aider. Vous pouvez poser vos questions en ligne et obtenir des réponses détaillées et adaptées à votre situation.</p>
+                <p class="text-white text-xl font-bold mt-6 w-[29rem] leading-relaxed">Publier des posts sur l’histoire est une manière essentielle de préserver et de transmettre les connaissances du passé. En partageant des événements marquants, des figures emblématiques et des récits historiques, on permet aux générations actuelles et futures de mieux comprendre leur héritage. Cela aide à renforcer l'identité culturelle, à éveiller la curiosité et à susciter des discussions autour des leçons du passé. De plus, dans un monde où l'information se propage rapidement, poster des contenus historiques vérifiés permet de contrer la désinformation et d'encourager un débat éclairé.</p>
             </div>
 
             <div class="relative ml-[2rem] grid h-[35rem] max-w-lg flex-col items-end justify-center overflow-hidden rounded-lg bg-white">
-                <div class="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent bg-[url('../public/images/lawyer-pctr1.jpg')] bg-cover bg-center">
+                <div class="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent bg-[url('https://cdn.pixabay.com/photo/2018/05/17/16/03/compass-3408928_1280.jpg')] bg-contain">
                     <div class="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-t from-black/80 via-black/50"></div>
                 </div>
                 <div class="relative text-center p-6 px-6 py-14 md:px-12">
                     <h2 class="mb-6 text-3xl font-medium text-white">
-                    Accédez à un avocat qualifié en quelques clics.
+                    Parler des sujets Historiques que vous aimez.
                     </h2>
                     
                 </div>
@@ -56,22 +56,22 @@
 
         <section class="flex gap-x-[6rem] mt-[7rem]">
             <div class="relative ml-[13rem] grid h-[35rem] max-w-lg flex-col items-end justify-center overflow-hidden rounded-lg bg-white">
-                <div class="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent bg-[url('../public/images/lawyer-pctr3.png')] bg-cover bg-center">
+                <div class="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent bg-[url('https://s.france24.com/media/display/ac170a88-c10b-11ef-9e77-005056a97e36/w:720/p:16x9/recap-sports-23-12-2024.jpg')] bg-contain bg-center">
                     <div class="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-t from-black/80 via-black/50"></div>
                 </div>
                 <div class="relative text-center p-6 px-6 py-14 md:px-12">
                     <h2 class="mb-6 text-3xl font-medium text-white">
-                    Le bon avocat fait toute la différence.
+                    Le sport, la motivation et la discipline fait toute la différence.
                     </h2>
                     
                 </div>
             </div>
 
             <div class="mt-[4rem]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 fill-stone-700 inline rotate-180" viewBox="0 0 475.082 475.081">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 fill-white inline rotate-180" viewBox="0 0 475.082 475.081">
                     <path d="M164.454 36.547H54.818c-15.229 0-28.171 5.33-38.832 15.987C5.33 63.193 0 76.135 0 91.365v109.632c0 15.229 5.327 28.169 15.986 38.826 10.66 10.656 23.606 15.988 38.832 15.988h63.953c7.611 0 14.084 2.666 19.414 7.994 5.33 5.325 7.994 11.8 7.994 19.417v9.131c0 20.177-7.139 37.397-21.413 51.675-14.275 14.271-31.499 21.409-51.678 21.409h-18.27c-4.952 0-9.233 1.813-12.851 5.427-3.615 3.614-5.424 7.898-5.424 12.847v36.549c0 4.941 1.809 9.233 5.424 12.848 3.621 3.613 7.898 5.427 12.851 5.427h18.271c19.797 0 38.688-3.86 56.676-11.566 17.987-7.707 33.546-18.131 46.68-31.265 13.131-13.135 23.553-28.691 31.261-46.679 7.707-17.987 11.562-36.877 11.562-56.671V91.361c0-15.23-5.33-28.171-15.987-38.828s-23.602-15.986-38.827-15.986zm294.635 15.987c-10.656-10.657-23.599-15.987-38.828-15.987H310.629c-15.229 0-28.171 5.33-38.828 15.987-10.656 10.66-15.984 23.601-15.984 38.831v109.632c0 15.229 5.328 28.169 15.984 38.826 10.657 10.656 23.6 15.988 38.828 15.988h63.953c7.611 0 14.089 2.666 19.418 7.994 5.324 5.328 7.994 11.8 7.994 19.417v9.131c0 20.177-7.139 37.397-21.416 51.675-14.274 14.271-31.494 21.409-51.675 21.409h-18.274c-4.948 0-9.233 1.813-12.847 5.427-3.617 3.614-5.428 7.898-5.428 12.847v36.549c0 4.941 1.811 9.233 5.428 12.848 3.613 3.613 7.898 5.427 12.847 5.427h18.274c19.794 0 38.684-3.86 56.674-11.566 17.984-7.707 33.541-18.131 46.676-31.265 13.134-13.135 23.562-28.695 31.265-46.679 7.706-17.983 11.563-36.877 11.563-56.671V91.361c-.003-15.23-5.328-28.171-15.992-38.827z" data-original="#000000"></path>
                 </svg>
-                <p class="text-stone-700 text-xl font-bold mt-6 w-[29rem] leading-relaxed">Choisir le bon avocat est crucial pour obtenir les meilleurs conseils et résultats possibles. Notre plateforme vous aide à évaluer vos options en fonction de l'expertise de chaque avocat, de ses spécialités, ainsi que des avis de précédents clients. Grâce à notre interface simple et intuitive, vous pouvez comparer plusieurs professionnels et sélectionner celui qui correspond le mieux à vos attentes et à votre situation juridique.</p>
+                <p class="text-white text-xl font-bold mt-6 w-[29rem] leading-relaxed">Le sport, quant à lui, est un puissant vecteur de rassemblement et de motivation. Publier sur le sport permet non seulement de célébrer les performances des athlètes et les moments historiques de diverses disciplines, mais aussi d'inspirer les individus à adopter un mode de vie actif. Ces posts favorisent également l'échange et l'unité entre les fans, tout en offrant une plateforme pour soutenir des causes sociales liées au sport, comme l'inclusion et l'égalité. Le sport étant un langage universel, il permet de dépasser les frontières culturelles et d’encourager la solidarité entre les peuples.</p>
             </div>
         </section>
        
