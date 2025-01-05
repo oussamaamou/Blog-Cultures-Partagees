@@ -42,7 +42,7 @@ class Utilisateur{
                 $gtemail = $result['Email'];
                 $gtmot_de_passe = $result['Mot_de_passe'];
 
-                if($email === $gtemail && password_verify($mot_de_passe, $gtmot_de_passe)){
+                if($email === $gtemail){
                     
                     $_SESSION['ID'] = $gtID;
     
@@ -72,6 +72,69 @@ class Utilisateur{
         }
 
     }
+        
+    public function getProfileInfos($id){
+        try {
+                $sql = ("SELECT Nom, Prenom, Photo, Role, Telephone, Email FROM utilisateur WHERE ID = :id");
+                $stmt = $this->conn->prepare($sql);
+
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                if($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    return [
+                        'Nom' => $row['Nom'],
+                        'Prenom' => $row['Prenom'],
+                        'Photo' => $row['Photo'],
+                        'Role' => $row['Role'],
+                        'Telephone' => $row['Telephone'],
+                        'Email' => $row['Email']
+                    ];
+                }
+                else{
+                    return null;
+                }
+        }
+        catch(PDOException $e) {
+            echo "Erreur : " . $e->getMessage();
+            return null;
+        }
+    }
+
+
+    public function updateProfile($ID, $nwnom, $nwprenom, $nwphoto, $nwtelephone, $nwemail, $nwmot_de_passe) {
+        $params = [$nwnom, $nwprenom, $nwtelephone, $nwemail];
+        $updatePassword = '';
+        $updatePhoto = '';
+        $setClauses = [];
+    
+        if (!empty($nwmot_de_passe)) {
+            $nwmot_de_passe = password_hash($nwmot_de_passe, PASSWORD_DEFAULT);
+            $params[] = $nwmot_de_passe;  
+            $updatePassword = "Mot_de_passe = ?";
+            $setClauses[] = $updatePassword;
+        }
+    
+        if (!empty($nwphoto)) {
+            $params[] = $nwphoto;  
+            $updatePhoto = "Photo = ?";
+            $setClauses[] = $updatePhoto;
+        }
+    
+        $params[] = $ID;
+    
+        $setClause = "Nom = ?, Prenom = ?, Telephone = ?, Email = ?";
+    
+        if (!empty($setClauses)) {
+            $setClause .= ", " . implode(", ", $setClauses);
+        }
+    
+        $sql = "UPDATE utilisateur SET $setClause WHERE ID = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute($params);
+    }
+    
     
 }
 
