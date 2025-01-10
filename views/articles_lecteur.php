@@ -2,6 +2,7 @@
 
 require '../classes/Connexion.php';
 require '../classes/Article.php';
+require '../classes/Interaction.php';
 
 session_start();
 
@@ -10,11 +11,33 @@ if(!isset($_SESSION['ID'])){
     exit();
 }
 
+$ID_lecteur = $_SESSION['ID'];
+
 $db = new DataBase();
 $conn = $db->getConnection();
 
 $article = new Article($conn);
+$interaction = new Interaction($conn);
 $posters = $article->getLecteurArticles();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_comment'])) {
+
+    $interaction->setIDLecteur($ID_lecteur);
+    $interaction->setIDArticle($ID_article = $_POST['ID_article']);
+    $interaction->setDescription($description = $_POST['description']);
+    $interaction->setDataPublication($date_publication = date("Y-m-d H:i:s"));
+
+    $interaction->addComment($ID_lecteur, $ID_article, $description, $date_publication);
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_like'])){
+    $interaction->setIDLecteur($ID_lecteur);
+    $interaction->setIDArticle($ID_article = $_POST['article_like']);
+
+    $interaction->ajouterLike($ID_lecteur, $ID_article);
+}
+
 
 ?>
 
@@ -64,9 +87,27 @@ $posters = $article->getLecteurArticles();
         </nav>
     </header>
 
+    <div class="flex rounded-md border-2 border-purple-400 mt-[2rem] overflow-hidden max-w-md mx-auto">
+        <input type="email" placeholder="Search Something..."
+          class="w-full outline-none bg-white text-gray-600 text-sm px-4 py-3" />
+        <button type='button' class="flex items-center justify-center bg-purple-400  px-5">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px" class="fill-white">
+            <path
+              d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
+            </path>
+          </svg>
+        </button>
+    </div>
+
     <main>
 
         <section>
+
+            <!-- Like Form-->
+            <form id="ajouterlike" method="POST" >
+                <input type="hidden" name="add_like" value="1">
+                <input type="hidden" name="article_like" id="article_like" value="">
+            </form>
             
             <!-- Post Card-->
             <?php foreach($posters as $poster) { ?>
@@ -87,13 +128,93 @@ $posters = $article->getLecteurArticles();
                         <div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg lg:overflow-visible">
                             <img
                                 class="object-cover object-center w-full h-96"
-                                src="https://images.pexels.com/photos/4050347/pexels-photo-4050347.jpeg?cs=srgb&dl=pexels-vlada-karpovich-4050347.jpg&fm=jpg"
+                                src="uploads/<?php echo $poster['Image'] ?>"
                                 alt="nature image"
                             />
                         </div>
                         <p class="text-gray-700 dark:text-gray-300 mb-6 mt-6">
                             <?php echo htmlspecialchars($poster['Contenu']) ?>
                         </p>
+                    </div>
+                </div>
+
+                <div class="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
+                    <div class="w-full flex-col justify-start items-start lg:gap-10 gap-6 inline-flex">
+                        <div class="w-full flex-col justify-start items-start lg:gap-9 gap-6 flex">
+                            <div class="w-full relative flex justify-between gap-2">
+                                <button onclick="getIdCommentaire(<?php echo $poster['ID']; ?>)" class="block items-center px-1 -ml-1 flex-column">
+                                    <svg class="w-8 h-8 text-gray-600 cursor-pointer hover:text-purple-700" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
+                                        </path>
+                                    </svg>
+                                    <?php $nmbrlikes = $interaction->getLikeCount($poster['ID']);  ?>
+                                    <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-300"><?php echo $nmbrlikes ?></span>
+                                </button>
+                                <form method="POST" class="w-full">
+                                    <input type="hidden" name="add_comment" value="1">
+                                    <input type="hidden" name="ID_article" value="<?php echo $poster['ID']; ?>">
+                                    <input type="text" name="description"
+                                        class="w-full py-3 px-5 rounded-lg border border-gray-300 bg-white shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] focus:outline-none text-gray-900 placeholder-gray-400 text-sm font-normal leading-relaxed"
+                                        placeholder="Write comments here....">
+                                    <button type="submit" class="absolute right-6 top-[18px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                            fill="none">
+                                            <path
+                                                d="M11.3011 8.69906L8.17808 11.8221M8.62402 12.5909L8.79264 12.8821C10.3882 15.638 11.1859 17.016 12.2575 16.9068C13.3291 16.7977 13.8326 15.2871 14.8397 12.2661L16.2842 7.93238C17.2041 5.17273 17.6641 3.79291 16.9357 3.06455C16.2073 2.33619 14.8275 2.79613 12.0679 3.71601L7.73416 5.16058C4.71311 6.16759 3.20259 6.6711 3.09342 7.7427C2.98425 8.81431 4.36221 9.61207 7.11813 11.2076L7.40938 11.3762C7.79182 11.5976 7.98303 11.7083 8.13747 11.8628C8.29191 12.0172 8.40261 12.2084 8.62402 12.5909Z"
+                                                stroke="#111827" stroke-width="1.6" stroke-linecap="round" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                            <div>
+                                <hr class="h-px w-[50rem] my-4 bg-gray-200 border-0 dark:bg-gray-700">
+
+                                <svg id="morecmnt" class="w-4 h-4 text-purple-700 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 10">
+                                    <path d="M15.434 1.235A2 2 0 0 0 13.586 0H2.414A2 2 0 0 0 1 3.414L6.586 9a2 2 0 0 0 2.828 0L15 3.414a2 2 0 0 0 .434-2.179Z"/>
+                                </svg>
+                                <svg id="lesscmnt" class="w-4 h-4 text-purple-700 cursor-pointer hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 10 16">
+                                    <path d="M3.414 1A2 2 0 0 0 0 2.414v11.172A2 2 0 0 0 3.414 15L9 9.414a2 2 0 0 0 0-2.828L3.414 1Z"/>
+                                </svg>
+                            </div>
+                            <div id="cmntsction" class="w-full flex-col justify-start items-start gap-8 flex hidden">
+                                <?php   $comments = $interaction->getCommentsByArticle($poster['ID']);
+                                foreach($comments as $comment) { ?>
+
+                                    <div class="w-full flex-col justify-start items-end gap-5 flex">
+                                        <div
+                                            class="w-full p-6 bg-white rounded-2xl border border-gray-200 flex-col justify-start items-start gap-8 flex">
+                                            <div class="w-full flex-col justify-center items-start gap-3.5 flex">
+                                                <div class="w-full justify-between items-center inline-flex">
+                                                    <div class="justify-start items-center gap-2.5 flex">
+                                                        <div
+                                                            class="w-10 h-10 bg-gray-300 rounded-full justify-start items-start gap-2.5 flex">
+                                                            <img class="rounded-full object-cover" src="uploads/<?php echo $comment['lecteur_photo'] ?>"
+                                                                alt="Lecteur image" />
+                                                        </div>
+                                                        <div class="flex-col justify-start items-start gap-1 inline-flex">
+                                                            <h5 class="text-gray-900 text-sm font-semibold leading-snug">
+                                                            <?php echo htmlspecialchars($comment['lecteur_nom']) ?>
+                                                            </h5>
+                                                            <h6 class="text-gray-500 text-xs font-normal leading-5"><?php echo htmlspecialchars($comment['commentaire_date']) ?></h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-6 h-6 relative">
+                                                        <div class="w-full h-fit flex">
+                                                            <div class="relative w-full">
+                                                                <div class="absolute left-0 top-0 py-2.5 px-4 text-gray-300"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="text-gray-800 text-sm font-normal leading-snug"><?php echo htmlspecialchars($comment['commentaire_description']) ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,6 +249,33 @@ $posters = $article->getLecteurArticles();
     </footer>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const morecmntButtons = document.querySelectorAll("#morecmnt");
+            const lesscmntButtons = document.querySelectorAll("#lesscmnt");
+            const cmntSections = document.querySelectorAll("#cmntsction");
+
+            morecmntButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    cmntSections[index].classList.remove('hidden');
+                    button.classList.add('hidden'); 
+                    lesscmntButtons[index].classList.remove('hidden');
+                });
+            });
+
+            lesscmntButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    cmntSections[index].classList.add('hidden');
+                    button.classList.add('hidden'); 
+                    morecmntButtons[index].classList.remove('hidden');
+                });
+            });
+        });
+
+        function getIdCommentaire(article_like) {
+        document.getElementById("article_like").value = article_like;
+        document.getElementById("ajouterlike").submit();
+        };
 
         
     </script>
