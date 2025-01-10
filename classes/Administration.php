@@ -1,99 +1,94 @@
 <?php
-
-class Administrateur{
-
+class Administrateur {
+    
     private $conn;
+    private $roleLecteur = 'Lecteur';
+    private $roleAuteur = 'Auteur';
+    private $statutArticle = 'Accepté';
 
-    public function __construct($conn){
+    public function __construct($conn) {
         $this->conn = $conn;
     }
 
-    public function getAllLecteur(){
-       try{ 
-            $sql = ("SELECT * FROM utilisateur WHERE Role = :role");
-            $stmt = $this->conn->prepare($sql);
-            $role = 'Lecteur';
-            
-            $stmt->bindParam(':role', $role, PDO::PARAM_STR);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-       }
-       catch(PDOException $e){
-        echo "Error: " . $e->getMessage();
-        return [];
-       }
+    public function setRoleLecteur($role) {
+        $this->roleLecteur = $role;
     }
 
-    public function getAllAuteur(){
-        try{ 
-            $sql = ("SELECT * FROM utilisateur WHERE Role = :role");
+    public function getRoleLecteur() {
+        return $this->roleLecteur;
+    }
+
+    public function setRoleAuteur($role) {
+        $this->roleAuteur = $role;
+    }
+
+    public function getRoleAuteur() {
+        return $this->roleAuteur;
+    }
+
+    public function setStatutArticle($statut) {
+        $this->statutArticle = $statut;
+    }
+
+    public function getStatutArticle() {
+        return $this->statutArticle;
+    }
+
+    public function getAllLecteur() {
+        try {
+            $sql = "SELECT * FROM utilisateur WHERE Role = :role";
             $stmt = $this->conn->prepare($sql);
-            $role = 'Auteur';
-            
-            $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+            $stmt->bindParam(':role', $this->roleLecteur, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-       }
-       catch(PDOException $e){
-        echo "Error: " . $e->getMessage();
-        return [];
-       }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+    }
+
+    public function getAllAuteur() {
+        try {
+            $sql = "SELECT * FROM utilisateur WHERE Role = :role";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':role', $this->roleAuteur, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
     }
 
     public function getTotalLecteur() {
-
         $sql = "SELECT count(Nom) FROM utilisateur WHERE Role = :role";
         $stmt = $this->conn->prepare($sql);
-        
-        $role = 'Lecteur';
-        $stmt->bindParam(':role', $role, PDO::PARAM_STR);
-
+        $stmt->bindParam(':role', $this->roleLecteur, PDO::PARAM_STR);
         $stmt->execute();
-        $result = $stmt->fetchColumn(); 
-        
-        return $result;
+        return $stmt->fetchColumn();
     }
-    
 
-    public function getTotalAuteur(){
-        
+    public function getTotalAuteur() {
         $sql = "SELECT count(Nom) FROM utilisateur WHERE Role = :role";
         $stmt = $this->conn->prepare($sql);
-        
-        $role = 'Auteur';
-        $stmt->bindParam(':role', $role, PDO::PARAM_STR);
-
+        $stmt->bindParam(':role', $this->roleAuteur, PDO::PARAM_STR);
         $stmt->execute();
-        $result = $stmt->fetchColumn(); 
-        
-        return $result;
+        return $stmt->fetchColumn();
     }
 
-    public function getTotalArticle(){
-        
+    public function getTotalArticle() {
         $sql = "SELECT count(Titre) FROM article WHERE Statut = :statut";
         $stmt = $this->conn->prepare($sql);
-        
-        $statut = 'Accepté';
-        $stmt->bindParam(':statut', $statut, PDO::PARAM_STR);
-
+        $stmt->bindParam(':statut', $this->statutArticle, PDO::PARAM_STR);
         $stmt->execute();
-        $result = $stmt->fetchColumn(); 
-        
-        return $result;
+        return $stmt->fetchColumn();
     }
 
-    public function getTotalUtilisateur(){
-        
+    public function getTotalUtilisateur() {
         $sql = "SELECT count(Nom) FROM utilisateur";
         $stmt = $this->conn->prepare($sql);
-
         $stmt->execute();
-        $result = $stmt->fetchColumn(); 
-        
-        return $result;
+        return $stmt->fetchColumn();
     }
 }
-
-
 ?>
