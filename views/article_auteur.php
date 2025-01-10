@@ -3,6 +3,7 @@
 require '../classes/Connexion.php';
 require '../classes/Article.php';
 require '../classes/Categorie.php';
+require '../classes/Interaction.php';
 
 session_start();
 
@@ -13,22 +14,24 @@ if(!isset($_SESSION['ID'])){
 
 $db = new DataBase();
 $conn = $db->getConnection();
-
-$article = new Article($conn);
 $categorie = new Categorie($conn);
+$interaction = new Interaction($conn);
+$article = new Article($conn);
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $ID_auteur = $_SESSION['ID'];
-    $ID_categorie = $_POST['specialite']; 
-    $titre = $_POST['titre'];
-    $contenu = $_POST['contenu'];
-    $statut = 'Encours';
-    $date_publication = date("Y-m-d"); 
-
-    $image = null;
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        $fileTmpPath = $_FILES['photo']['tmp_name'];
-        $fileName = $_FILES['photo']['name'];
+    
+    $article->setAuteur($ID_auteur = $_SESSION['ID']);
+    $article->setCategorie($ID_categorie = $_POST['specialite']);
+    $article->setTitre($titre = $_POST['titre']);
+    $article->setContenu($contenu = $_POST['contenu']);
+    $article->setStatut($statut = 'Encours');
+    $article->setDatePublication($date_publication = date("Y-m-d H:i:s"));
+    
+    $article->setImage($image = null);
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $fileTmpPath = $_FILES['image']['tmp_name'];
+        $fileName = $_FILES['image']['name'];
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
@@ -43,8 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $newFileName = uniqid('profile_', true) . '.' . $fileExtension;
             $uploadPath = $uploadDir . $newFileName;
 
-            if (move_uploaded_file($fileTmpPath, $uploadPath)) {
-                $image = $newFileName;  
+            if (move_uploaded_file($fileTmpPath, $uploadPath)) { 
+                $article->setImage($image = $newFileName);
+                
             } else {
                 echo '';
             }
@@ -56,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $article->addArticle($ID_auteur, $ID_categorie, $titre, $contenu, $image, $statut, $date_publication);
 }
 
-$posters = $article->getAllArticles();
+$posters = $article->getLecteurArticles();
 $categoriess = $categorie->getAllCategorie();
 
 
@@ -152,31 +156,83 @@ $categoriess = $categorie->getAllCategorie();
             </button>
         </div>    
 
-        <?php foreach($posters as $poster){ ?>
-        <!-- Post Card-->
-        <div class="ml-[20rem] mb-[3rem] bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full p-8 transition-all duration-300 animate-fade-in pt-[3.5rem]">
-            <div class="flex flex-col md:flex-row">
-                <div class="md:w-2/3 md:pl-8">
-                    <p class="text-gray-700 font-semibold text-2xl dark:text-gray-300 mb-6"><?php echo htmlspecialchars($poster['Titre']) ?></p>
-                    <div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg lg:overflow-visible">
-                        <img
-                            class="object-cover object-center w-full h-96"
-                            src="https://images.pexels.com/photos/4050347/pexels-photo-4050347.jpeg?cs=srgb&dl=pexels-vlada-karpovich-4050347.jpg&fm=jpg"
-                            alt="Poster Image"
-                        />
+        <?php foreach($posters as $poster) { ?>
+            <div class="mt-[4rem] ml-[20rem] bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full p-8 transition-all duration-300 animate-fade-in pt-[3.5rem]">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/3 text-center mb-8 md:mb-0">
+                        <img src="uploads/<?php echo $poster['auteur_photo']; ?>" alt="Profile Picture" class="rounded-full w-48 h-48 mx-auto mb-4 border-4 border-purple-500 transition-transform duration-300 hover:scale-105">
+                        <h1 class="text-2xl font-bold text-purple-500 dark:text-white mb-2"></h1>
+                        <p class="text-stone-700 font-semibold"><?php echo htmlspecialchars($poster['auteur_nom']) . ' ' . htmlspecialchars($poster['auteur_prenom']); ?></p>
+                        
+
+                        <h2 class="text-xl font-semibold text-purple-500 mb-4  mt-[3rem]">Catégorie</h2>
+                        <p class="text-stone-700 font-semibold"><?php echo htmlspecialchars($poster['categorie_nom']) ?></p>
+                        
                     </div>
-                    <p class="text-gray-700 dark:text-gray-300 mb-6 mt-6">
-                        <?php echo htmlspecialchars($poster['Contenu']) ?>
-                    </p>
+                    <div class="md:w-2/3 md:pl-8">
+                        <p class="text-gray-700 font-semibold text-2xl dark:text-gray-300 mb-6"> <?php echo htmlspecialchars($poster['Titre']) ?></p>
+                        <div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg lg:overflow-visible">
+                            <img
+                                class="object-cover object-center w-full h-96"
+                                src="uploads/<?php echo $poster['Image']; ?>"
+                                alt="nature image"
+                            />
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 mb-6 mt-6">
+                            <?php echo htmlspecialchars($poster['Contenu']) ?>
+                        </p>
+                    </div>
                 </div>
 
-                <div class="md:w-1/3 text-center mb-8 md:mb-0">
-                    <h2 class="text-xl font-semibold text-purple-500 mb-4  mt-[3rem]">Catégorie</h2>
-                    <p class="text-stone-700 font-semibold"><?php echo htmlspecialchars($poster['categorie_nom']) ?></p>
-                    
+                <div class="mb-[0.5rem]">
+                    <hr class="h-px w-[50rem] my-4 bg-gray-200 border-0 dark:bg-gray-700">
+
+                    <svg id="morecmnt" class="w-4 h-4 text-purple-700 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 10">
+                        <path d="M15.434 1.235A2 2 0 0 0 13.586 0H2.414A2 2 0 0 0 1 3.414L6.586 9a2 2 0 0 0 2.828 0L15 3.414a2 2 0 0 0 .434-2.179Z"/>
+                    </svg>
+                    <svg id="lesscmnt" class="w-4 h-4 text-purple-700 cursor-pointer hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 10 16">
+                        <path d="M3.414 1A2 2 0 0 0 0 2.414v11.172A2 2 0 0 0 3.414 15L9 9.414a2 2 0 0 0 0-2.828L3.414 1Z"/>
+                    </svg>
                 </div>
+
+                <div id="cmntsction" class="w-full flex-col justify-start items-start gap-8 flex hidden">
+                    <?php   $comments = $interaction->getCommentsByArticle($poster['ID']);
+                    foreach($comments as $comment) { ?>
+
+                        <div class="w-full flex-col justify-start items-end gap-5 flex">
+                            <div
+                                class="w-full p-6 bg-white rounded-2xl border border-gray-200 flex-col justify-start items-start gap-8 flex">
+                                <div class="w-full flex-col justify-center items-start gap-3.5 flex">
+                                    <div class="w-full justify-between items-center inline-flex">
+                                        <div class="justify-start items-center gap-2.5 flex">
+                                            <div
+                                                class="w-10 h-10 bg-gray-300 rounded-full justify-start items-start gap-2.5 flex">
+                                                <img class="rounded-full object-cover" src="uploads/<?php echo $comment['lecteur_photo'] ?>"
+                                                    alt="Lecteur image" />
+                                            </div>
+                                            <div class="flex-col justify-start items-start gap-1 inline-flex">
+                                                <h5 class="text-gray-900 text-sm font-semibold leading-snug">
+                                                <?php echo htmlspecialchars($comment['lecteur_nom']) ?>
+                                                </h5>
+                                                <h6 class="text-gray-500 text-xs font-normal leading-5"><?php echo htmlspecialchars($comment['commentaire_date']) ?></h6>
+                                            </div>
+                                        </div>
+                                        <div class="w-6 h-6 relative">
+                                            <div class="w-full h-fit flex">
+                                                <div class="relative w-full">
+                                                    <div class="absolute left-0 top-0 py-2.5 px-4 text-gray-300"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-800 text-sm font-normal leading-snug"><?php echo htmlspecialchars($comment['commentaire_description']) ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+
             </div>
-        </div>
         <?php } ?>
 
     </main>
@@ -210,6 +266,8 @@ $categoriess = $categorie->getAllCategorie();
         const ctnr2 = document.getElementById("postform");
         const xmark2 = document.getElementById("xmarkcsltion2");
         const ajtpost = document.getElementById("ajtpost");
+        const dropdownbutton = document.getElementById("dropdown-button");
+        const dropdown1 = document.getElementById("dropdown-1");
         
         xmark2?.addEventListener('click', function(){
             ctnr2.classList.add('hidden');
@@ -219,6 +277,38 @@ $categoriess = $categorie->getAllCategorie();
         ajtpost?.addEventListener('click', function(){
             ctnr2.classList.remove('hidden');
         });
+
+        dropdownbutton?.addEventListener('click', function(){
+            dropdown1.classList.remove('hidden');
+        });
+
+        dropdownbutton?.addEventListener('dblclick', function(){
+            dropdown1.classList.add('hidden');
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const morecmntButtons = document.querySelectorAll("#morecmnt");
+            const lesscmntButtons = document.querySelectorAll("#lesscmnt");
+            const cmntSections = document.querySelectorAll("#cmntsction");
+
+            morecmntButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    cmntSections[index].classList.remove('hidden');
+                    button.classList.add('hidden'); 
+                    lesscmntButtons[index].classList.remove('hidden');
+                });
+            });
+
+            lesscmntButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    cmntSections[index].classList.add('hidden');
+                    button.classList.add('hidden'); 
+                    morecmntButtons[index].classList.remove('hidden');
+                });
+            });
+        });
+
     </script>
 </body>
 </html>
