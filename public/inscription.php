@@ -4,19 +4,44 @@ require '../classes/Connexion.php';
 require '../classes/Utilisateur.php'; 
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $role = $_POST['role'];
-    $telephone = $_POST['telephone'];
-    $email = $_POST['email'];
-    $mot_de_passe = $_POST['mot_de_passe'];
 
     $db = new DataBase();
     $conn = $db->getConnection(); 
 
     $client = new Utilisateur($conn);
 
-    if($client->inscriptionUtilisateur($nom, $prenom, $role, $telephone, $email, $mot_de_passe)){
+    $client->setNom($nom = $_POST['nom']);
+    $client->setPrenom($prenom = $_POST['prenom']);
+    $client->setRole( $role = $_POST['role']);
+    $client->setTelephone($telephone = $_POST['telephone']);
+    $client->setEmail($email = $_POST['email']);
+    $client->setMotDePasse($mot_de_passe = $_POST['mot_de_passe']);
+    
+    $client->setPhoto($photo = null);
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
+        $fileTmpPath = $_FILES['photo']['tmp_name'];
+        $fileName = $_FILES['photo']['name'];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        
+        if (in_array($fileExtension, $allowedExtensions)) {
+            $uploadDir = '../views/uploads/';
+
+            $newFileName = uniqid('profile_', true) . '.' . $fileExtension;
+            $uploadPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($fileTmpPath, $uploadPath)) {
+                $client->setPhoto($photo = $newFileName);
+            } else {
+                echo '';
+            }
+        } else {
+            echo '';
+        }
+    }
+    
+    if($client->inscriptionUtilisateur($nom, $prenom, $photo, $role, $telephone, $email, $mot_de_passe)){
         header('location: login.php');
         exit();
     }
@@ -50,7 +75,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                         <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                         Créer votre compte
                         </h1>
-                        <form class="space-y-4 md:space-y-6" method="POST">
+                        <form class="space-y-4 md:space-y-6" method="POST" enctype="multipart/form-data">
                             <div>
                                 <label for="nom" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom</label>
                                 <input type="text" name="nom" id="nom" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ahmed" required="">
@@ -58,6 +83,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                             <div>
                                 <label for="prenom" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prenom</label>
                                 <input type="text" name="prenom" id="prenom" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Jobry" required="">
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-stone-700 dark:text-white" for="photo">Photo</label>
+                                <input name="photo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-[7px] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="file">
                             </div>
                             <div>
                                 <label for="telephone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone</label>
