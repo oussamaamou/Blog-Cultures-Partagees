@@ -6,16 +6,17 @@ session_start();
 $error_message = ""; 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $mot_de_passe = $_POST['mot_de_passe'];
 
     $db = new DataBase();
     $conn = $db->getConnection(); 
 
     $client = new Utilisateur($conn);
     
+    $client->setEmail($email = $_POST['email']);
+    $client->setMotDePasse($mot_de_passe = $_POST['mot_de_passe']);
+    
     if (!$client->loginUtilisateur($email, $mot_de_passe)) {
-        $error_message = "Invalid Email or Password.";
+        $error_message = "Invalid Email ou Password.";
     }
     
 }
