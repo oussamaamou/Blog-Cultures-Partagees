@@ -19,6 +19,8 @@ $auteur = new Utilisateur($conn);
 
 $profile = $auteur->getProfileInfos($ID);
 
+$auteur->setId($ID);
+
 if ($profile) {
     $nom = $profile['Nom'];
     $prenom = $profile['Prenom'];
@@ -33,13 +35,13 @@ if ($profile) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nwnom = $_POST['nom'];
-    $nwprenom = $_POST['prenom'];
-    $nwtelephone = $_POST['telephone'];
-    $nwemail = $_POST['email'];
-    $nwmot_de_passe = $_POST['password'];
+    $auteur->setNom($nwnom = $_POST['nom']);
+    $auteur->setPrenom($nwprenom = $_POST['prenom']);
+    $auteur->setTelephone($nwtelephone = $_POST['telephone']);
+    $auteur->setEmail($nwemail = $_POST['email']);
+    $auteur->setMotDePasse($nwmot_de_passe = $_POST['password']);
     
-    $nwphoto = null;
+    $auteur->setPhoto($nwphoto = null);
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
         $fileTmpPath = $_FILES['photo']['tmp_name'];
         $fileName = $_FILES['photo']['name'];
@@ -58,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $uploadPath = $uploadDir . $newFileName;
 
             if (move_uploaded_file($fileTmpPath, $uploadPath)) {
-                $nwphoto = $newFileName;  
+                $auteur->setPhoto($nwphoto = $newFileName);
             } else {
                 echo '';
             }
