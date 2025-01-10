@@ -35,17 +35,37 @@ if ($profile) {
     exit();
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    
-    $nom = $_POST['nom'];
-    $description = $_POST['description'];
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_categorie'])){
+    $categorie->setNom($nom = $_POST['nom']);
+    $categorie->setDescription($description = $_POST['description']);
 
     $categorie->creerCategorie($nom, $description);
+}
+
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_tag'])){
+    $categorie->setNom($nom = $_POST['nom']);
+
+    $categorie->creerTag($nom);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_categorie'])) {
+    $ID_categorie = $_POST['categorie_ID_Supp'] ?? null;
+    if ($ID_categorie) {
+        $categorie->deleteCategorie($ID_categorie);
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tags'])) {
+    $ID_tag = $_POST['tags_ID_Supp'] ?? null;
+    if ($ID_tag) {
+        $categorie->deleteTags($ID_tag);
+    }
 }
 
 $lecteurs = $admin->getAllLecteur();
 $auteurs = $admin->getAllAuteur();
 $categoriess = $categorie->getAllCategorie();
+$tags = $categorie->getAllTags();
 $ttllctr = $admin->getTotalLecteur();
 $ttlautr = $admin->getTotalAuteur();
 $ttlartcl = $admin->getTotalArticle();
@@ -86,6 +106,20 @@ $ttlutlstr = $admin->getTotalUtilisateur();
             </svg>
             </a>
 
+            <a href="gestion_utilisateur.php" class="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg">
+            <span class="sr-only">Articles</span>
+            <svg class="w-6 h-6 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                <path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z"/>
+            </svg>
+            </a>
+
+            <a href="article_administrateur.php" class="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg">
+            <span class="sr-only">Tous les Articles</span>
+            <svg class="w-6 h-6 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                <path d="M15 1.943v12.114a1 1 0 0 1-1.581.814L8 11V5l5.419-3.871A1 1 0 0 1 15 1.943ZM7 4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2v5a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V4ZM4 17v-5h1v5H4ZM16 5.183v5.634a2.984 2.984 0 0 0 0-5.634Z"/>
+            </svg>
+            </a>
+
             <a href="profile_administrateur.php" class="inline-flex items-center justify-center py-3 hover:text-gray-400 hover:bg-gray-700 focus:text-gray-400 focus:bg-gray-700 rounded-lg">
             <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -121,6 +155,18 @@ $ttlutlstr = $admin->getTotalUtilisateur();
         </header>
         
         <main class="p-6 sm:p-10 space-y-6">
+
+            <!-- Form Suppression-->
+            <form id="supprimerCategorie" method="POST" action="">
+                <input type="hidden" name="delete_categorie" value="1">
+                <input type="hidden" name="categorie_ID_Supp" id="categorie_ID_Supp" value="">
+            </form>
+
+            <!-- Form Suppression-->
+            <form id="supprimerTags" method="POST" action="">
+                <input type="hidden" name="delete_tags" value="1">
+                <input type="hidden" name="tags_ID_Supp" id="tags_ID_Supp" value="">
+            </form>
             
             <div id="ctnrcsltion" class="hidden fixed left-[32rem] top-[-1rem] flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:pr-4 xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -130,6 +176,7 @@ $ttlutlstr = $admin->getTotalUtilisateur();
                             Créer Catégorie
                         </h1>
                         <form class="space-y-4 md:space-y-6" method="POST">
+                            <input type="hidden" name="add_categorie" value="1">
                             <input type="hidden" name="avocat_ID" id="avocat_ID" value="">
                                 <div>
                                     <label for="nom" class="block mb-2 text-sm font-medium text-stone-700 dark:text-white">Nom</label>
@@ -138,6 +185,25 @@ $ttlutlstr = $admin->getTotalUtilisateur();
                                 <div>
                                     <label for="description" class="block mb-2 text-sm font-medium text-stone-700 dark:text-white">Description</label>
                                     <textarea name="description" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" placeholder="Écrivez votre biographie ici..."></textarea>
+                                </div>
+                            <button type="submit" class="ml-[7rem] w-[8rem] text-white bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Confirmer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+            <div id="tagsltion" class="hidden fixed left-[32rem] top-[-1rem] flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+                <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:pr-4 xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                    <i id="xmarkcsltion2" class="fa-solid fa-xmark ml-[26rem] text-2xl cursor-pointer mt-[1.2rem]" style="color: #2e2e2e;"></i>
+                    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <h1 class="text-xl font-bold leading-tight tracking-tight text-stone-700 md:text-2xl dark:text-white">
+                            Créer Tags
+                        </h1>
+                        <form class="space-y-4 md:space-y-6" method="POST">
+                            <input type="hidden" name="add_tag" value="1">
+                                <div>
+                                    <label for="nom" class="block mb-2 text-sm font-medium text-stone-700 dark:text-white">Nom</label>
+                                    <input type="text" name="nom" id="nom" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" >
                                 </div>
                             <button type="submit" class="ml-[7rem] w-[8rem] text-white bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Confirmer</button>
                         </form>
@@ -154,7 +220,14 @@ $ttlutlstr = $admin->getTotalUtilisateur();
                         <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="flex-shrink-0 h-6 w-6 text-white -ml-1 mr-2">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
-                        Créer Catégorie
+                        Créer une Catégorie
+                    </button>
+
+                    <button id="tagbttn" class="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-md ml-6 mb-3">
+                        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="flex-shrink-0 h-6 w-6 text-white -ml-1 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Créer un Tag
                     </button>
                 </div>
             </div>
@@ -195,9 +268,6 @@ $ttlutlstr = $admin->getTotalUtilisateur();
                     <span class="block text-gray-500">Articles</span>
                     </div>
                 </div>
-            </section>
-
-            <section class="grid md:grid-cols-2 xl:grid-cols-4 xl:grid-rows-3 xl:grid-flow-col gap-6">
                 <div class="flex items-center p-8 bg-white shadow rounded-lg">
                     <div class="inline-flex flex-shrink-0 items-center justify-center h-16 w-16 text-purple-600 bg-purple-100 rounded-full mr-6">
                     <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
@@ -209,49 +279,9 @@ $ttlutlstr = $admin->getTotalUtilisateur();
                     <span class="block text-gray-500">Utilisateurs</span>
                     </div>
                 </div>
+            </section>
 
-                <div class="row-span-3 bg-white shadow rounded-lg">
-                    <div class="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100">
-                    <span>Les Lecteurs</span>
-                    
-                    </div>
-                    <div class="overflow-y-auto" style="max-height: 24rem;">
-                        <ul class="p-6 space-y-6">
-                            <?php foreach($lecteurs as $lecteur){ ?>
-                            <li class="flex items-center">
-                                <div class="h-10 w-10 mr-3 bg-gray-100 rounded-full overflow-hidden">
-                                    <img src="uploads/<?php echo $auteur['Photo']; ?>" alt="Profile picture">
-                                </div>
-                                <span class="text-gray-600"><?php echo htmlspecialchars($lecteur['Nom'] . ' ' . htmlspecialchars($lecteur['Prenom'])) ?></span>
-                                <span class="ml-auto font-semibold"><?php echo htmlspecialchars($lecteur['Telephone']) ?></span>
-                            </li>
-                            <?php } ?>
-                            
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="row-span-3 bg-white shadow rounded-lg">
-                    <div class="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100">
-                    <span>Les Auteurs</span>
-                    
-                    </div>
-
-                    <div class="overflow-y-auto" style="max-height: 24rem;">
-                        <ul class="p-6 space-y-6">
-                            <?php foreach($auteurs as $auteur){ ?>
-                            <li class="flex items-center">
-                            <div class="h-10 w-10 mr-3 bg-gray-100 rounded-full overflow-hidden">
-                                <img src="uploads/<?php echo $auteur['Photo']; ?>" alt="Profile picture">
-                            </div>
-                            <span class="text-gray-600"><?php echo htmlspecialchars($auteur['Nom'] . ' ' . htmlspecialchars($auteur['Prenom'])) ?></span>
-                            <span class="ml-auto font-semibold"><?php echo htmlspecialchars($auteur['Telephone']) ?></span>
-                            </li>
-                            <?php } ?>
-                        </ul>
-                    </div>
-
-                </div>
+            <section class="grid md:grid-cols-2 xl:grid-rows-3 xl:grid-flow-col gap-6">
 
                 <div class="row-span-3 bg-white shadow rounded-lg">
                     <div class="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100">
@@ -264,13 +294,48 @@ $ttlutlstr = $admin->getTotalUtilisateur();
                             <?php foreach($categoriess as $categories){ ?>
                             <li class="flex items-center">
                             <span class="font-bold text-gray-600"><?php echo htmlspecialchars($categories['Nom']) ?></span>
+                            <button onclick="getIdCategorie(<?php echo $categories['ID']; ?>)" type="button" class="ml-auto text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                </svg>
+                            </button>
+
                             </li>
                             <?php } ?>
                         </ul>
                     </div>
 
                 </div>
+
+                <!-- /////////////////////////////////////////////////////////// -->
+
+                <div class="row-span-3 bg-white shadow rounded-lg">
+                    <div class="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100">
+                    <span>Les Tags</span>
+                    
+                    </div>
+
+                    <div class="overflow-y-auto" style="max-height: 24rem;">
+                        <ul class="p-6 space-y-6">
+                            <?php foreach($tags as $tag){ ?>
+                            <li class="flex items-center">
+                            <span class="font-bold text-gray-600"><?php echo htmlspecialchars($tag['Nom']) ?></span>
+                            <button onclick="getIdTags(<?php echo $tag['ID']; ?>)" type="button" class="ml-auto text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-2 py-2.5 me-2 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                </svg>
+
+                            </button>
+
+                            </li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+
+                </div>
+                
             </section>
+
         </main>
     </div>
 
@@ -287,6 +352,30 @@ $ttlutlstr = $admin->getTotalUtilisateur();
         bttnmdfie.addEventListener('click', function(){
             ctnr1.classList.remove('hidden');
         });
+
+        const tagctnr1 = document.getElementById("tagsltion");
+        const xmark2 = document.getElementById("xmarkcsltion2");
+        const bttntag = document.getElementById("tagbttn");
+        
+        xmark2.addEventListener('click', function(){
+            tagctnr1.classList.add('hidden');
+        });
+
+
+        bttntag.addEventListener('click', function(){
+            tagctnr1.classList.remove('hidden');
+        });
+
+
+        function getIdCategorie(categorie_ID_Supp) {
+        document.getElementById("categorie_ID_Supp").value = categorie_ID_Supp;
+        document.getElementById("supprimerCategorie").submit();
+        };
+
+        function getIdTags(tags_ID_Supp) {
+        document.getElementById("tags_ID_Supp").value = tags_ID_Supp;
+        document.getElementById("supprimerTags").submit();
+        };
     </script>
 </body>
 </html>
