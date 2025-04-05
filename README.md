@@ -86,6 +86,6 @@
 ## 🧑‍💻 **Auteur**
 - **Nom :** Oussama Amou  
 - 📧 **Email :** oussama.amou.o@gmail.com  
-- 🌐 **GitHub :** (https://github.com/oussamaamou?tab=repositories)
-- 🌐 **LinkedIn :** (https://www.linkedin.com/in/oussama-amou-b71151337/) 
+- 🌐 **GitHub :** [oussamaamou](https://github.com/oussamaamou?tab=repositories)
+- 🌐 **LinkedIn :** [Oussama Amou](https://www.linkedin.com/in/oussama-amou-b71151337/) 
 ---
